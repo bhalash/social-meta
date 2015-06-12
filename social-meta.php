@@ -36,7 +36,16 @@
  * See: https://github.com/bhalash/article-images
  */
 
+if (is_admin()) {
+    return;
+}
+
 require_once('article-images/article-images.php');
+
+global $post;
+$the_post = get_post($post->ID);
+setup_postdata($the_post);
+$article_image_dimensions = get_post_image_dimensions($post->ID);
 
 /**
  * Social Meta Fallback
@@ -56,16 +65,30 @@ if (!isset($social_fallback)) {
 }
 
 /**
+ * Post Information
+ * -----------------------------------------------------------------------------
+ */
+
+$a_info = array(
+    'ID' => $post->ID,
+    'title' => get_the_title(),
+    'site_name' => get_bloginfo('name'),
+    'url' => get_site_url() . $_SERVER['REQUEST_URI'],
+    'description' => (is_single()) ? get_the_excerpt() : $social_fallback['description'],
+    'image' => get_post_image($post->ID),
+    'image_size' => array($article_image_dimensions[0], $article_image_dimensions[1]),
+    'twitter' => $social_fallback['twitter'],
+    'type' => (is_single()) ? 'article' : 'website',
+    'locale' => get_locale(),
+);
+
+/**
  * Output Open Graph and Twitter Card Tags
  * -----------------------------------------------------------------------------
  * Call the Open Graph and Twitter Card functions.
  */
 
 function social_meta() {
-    if (is_admin()) {
-        return;
-    }
-
     open_graph_tags();
     twitter_card_tags();
 }
@@ -78,20 +101,18 @@ function social_meta() {
  */
 
 function twitter_card_tags() {
-    global $social_fallback, $post;
-    $the_post = get_post($post->ID);
-    setup_postdata($the_post);
+    global $a_info;
 
-    $site_meta = array(
+    $twitter_meta = array(
         'twitter:card' => 'summary',
-        'twitter:site' => $social_fallback['twitter'],
-        'twitter:title' => get_the_title(),
-        'twitter:description' => (is_single()) ? get_the_excerpt() : $social_fallback['description'],
-        'twitter:image:src' => get_post_image($post->ID),
-        'twitter:url' => get_site_url() . $_SERVER['REQUEST_URI'],
+        'twitter:site' => $a_info['twitter'],
+        'twitter:title' => $a_info['title'],
+        'twitter:description' => $a_info['description'],
+        'twitter:image:src' => $a_info['image'],
+        'twitter:url' => $a_info['url']
     );
 
-    foreach ($site_meta as $key => $value) {
+    foreach ($twitter_meta as $key => $value) {
         printf('<meta name="%s" content="%s">', $key, $value);
     }
 }
@@ -104,54 +125,66 @@ function twitter_card_tags() {
  */
 
 function open_graph_tags() {
-    global $social_fallback, $post;
-    $the_post = get_post($post->ID);
-    setup_postdata($the_post);
+    global $a_info;
 
-    $image_dimensions = get_post_image_dimensions($post->ID);
-
-    $site_meta = array(
-        'og:title' => get_the_title(),
-        'og:site_name' => get_bloginfo('name'),
-        'og:url' => get_site_url() . $_SERVER['REQUEST_URI'],
-        'og:description' => (is_single()) ? get_the_excerpt() : $social_fallback['description'],
-        'og:image' => get_post_image($post->ID),
-        'og:image:width' => $image_dimensions[0],
-        'og:image:height' => $image_dimensions[1],
-        'og:type' => (is_single()) ? 'article' : 'website',
-        'og:locale' => get_locale(),
+    $facebook_meta = array(
+        'og:title' => $a_info['title'],
+        'og:site_name' => $a_info['site_name'],
+        'og:url' => $a_info['url'],
+        'og:description' => $a_info['description'],
+        'og:image' => $a_info['image'],
+        'og:image:width' => $a_info['image_size'][0],
+        'og:image:height' => $a_info['image_size'][1],
+        'og:type' => $a_info['type'],
+        'og:locale' => $a_info['locale'],
     );
 
     if (is_single()) {
-        // If single post, add category and tag information.
-        $category = get_the_category($post->ID)[0]->cat_name;
-
-        $tags = get_the_tags();
-        $taglist = array();
-        $i = 0;
-
-        foreach ($tags as $key => $value) {
-            if ($i > 0) {
-                $taglist[] = ', ';
-            }
-
-            $taglist[] = $value->name;
-            $i++;
-        }
-
-        $article_meta = array(
-            'article:section' => $category,
-            'article:tag' => implode('', $taglist),
-            'article:publisher' => $social_fallback['publisher'],
-        );
-
-        $site_meta = array_merge($site_meta, $article_meta);
+        $facebook_meta = array_merge($facebook_meta, facebook_single_info($a_info['ID']));
     }
 
-    foreach ($site_meta as $key => $value) {
+    foreach ($facebook_meta as $key => $value) {
         // Iterate all information and output.
         printf('<meta property="%s" content="%s">', $key, $value);
     }
+}
+
+/**
+ * Facebook Single Post Information
+ * -----------------------------------------------------------------------------
+ * Facebook requires some extra categorization information for single posts:
+ * 
+ * 1. Category. First post category is ascending numerical order is chosen.
+ * 2. Tags. All tags are iteratively added.
+ * 3. Publisher URL. Site URL is chosen.
+ */
+
+function facebook_single_info($post_id) {
+    if (is_null($post_id)) {
+        global $post;
+        $post_id = $post->ID;
+    }
+
+    $category = get_the_category($post->ID)[0]->cat_name;
+    $tags = get_the_tags();
+    $taglist = array();
+    $single_meta = array();
+    $i = 0;
+
+    foreach ($tags as $key => $value) {
+        if ($i > 0) {
+            $taglist[] = ', ';
+        }
+
+        $taglist[] = $value->name;
+        $i++;
+    }
+
+    $single_meta['article:section'] = $category;
+    $single_meta['article:tag'] = implode('', $taglist);
+    $single_meta['article:publisher'] = $social_fallback['publisher'];
+
+    return $single_meta;
 }
 
 /**
