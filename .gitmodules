@@ -1,0 +1,3 @@
+[submodule "article-images"]
+	path = article-images
+	url = https://github.com/bhalash/article-images
