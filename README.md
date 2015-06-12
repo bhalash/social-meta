@@ -1,4 +1,4 @@
-# Social Mata
+# Social Meta
 [social-meta.php](social-meta.php) is a self-contained library for a WordPress theme that generates [Facebook](https://developers.facebook.com/docs/sharing/opengraph)-appropriate [Open Graph](http://ogp.me/) tags and [Twitter Card](https://dev.twitter.com/cards/overview) tags appropriate for a personal site. 
 
 I wrote this because there are what seems like a hundred different WordPress Open Graph/Facebook/social/sharing plugins, but none of which did exactly what I wanted. The either had features locked behind paywall, nagging donations or outdated functionality. 
