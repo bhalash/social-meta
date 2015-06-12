@@ -173,19 +173,13 @@ function facebook_single_info($post_id = null) {
     $tags = get_the_tags();
     $taglist = array();
     $single_meta = array();
-    $i = 0;
 
-    foreach ($tags as $key => $value) {
-        if ($i > 0) {
-            $taglist[] = ', ';
-        }
-
-        $taglist[] = $value->name;
-        $i++;
+    foreach ($tags as $tag) {
+        $taglist[] = $tag->name;
     }
 
     $single_meta['article:section'] = $category;
-    $single_meta['article:tag'] = implode('', $taglist);
+    $single_meta['article:tag'] = implode(', ', $taglist);
     $single_meta['article:publisher'] = $_SERVER['SERVER_NAME'];
 
     return $single_meta;
