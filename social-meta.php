@@ -36,51 +36,52 @@
  * See: https://github.com/bhalash/article-images
  */
 
-if (is_admin()) {
-    return;
-}
-
 require_once('article-images/article-images.php');
 
-global $post;
-$the_post = get_post($post->ID);
-setup_postdata($the_post);
-$article_image_dimensions = get_post_image_dimensions($post->ID);
-
 /**
- * Social Meta Fallback
+ * Default Twitter Account
  * -----------------------------------------------------------------------------
- * This array is called on if the relevant information isn't available. 
- * FALLBACK_IMAGE_URL is used, because this file requires the use of the Article
- * Images script.
  */
 
-if (!isset($social_fallback)) {
-    $social_fallback = array(
-        'publisher' => $_SERVER['SERVER_NAME'],
-        'description' => get_bloginfo('description'),
-        // ...you probably want to change this! 
-        'twitter' => '@bhalash'
-    );
+if (!isset($social_twitter)) {
+    $social_twitter = '@bhalash';
 }
 
 /**
  * Post Information
  * -----------------------------------------------------------------------------
+ * @param   int         $post_id        ID of the post. 
+ * @param   array       $a_into         Post meta information.
  */
 
-$a_info = array(
-    'ID' => $post->ID,
-    'title' => get_the_title(),
-    'site_name' => get_bloginfo('name'),
-    'url' => get_site_url() . $_SERVER['REQUEST_URI'],
-    'description' => (is_single()) ? get_the_excerpt() : $social_fallback['description'],
-    'image' => get_post_image($post->ID),
-    'image_size' => array($article_image_dimensions[0], $article_image_dimensions[1]),
-    'twitter' => $social_fallback['twitter'],
-    'type' => (is_single()) ? 'article' : 'website',
-    'locale' => get_locale(),
-);
+function generate_post_meta($post_id = null) {
+    global $social_twitter;
+
+    if (is_null($post_id)) {
+        global $post;
+        setup_postdata($post);
+        $post_id = $post->ID;
+    }
+
+    $title = wp_title('-', false , 'right');
+    $title .= get_bloginfo('name'); 
+
+    $a_info = array(
+        'ID' => $post->ID,
+        // wp_title() is horrible and inconsistent.
+        'title' => $title,
+        'site_name' => get_bloginfo('name'),
+        'url' => get_site_url() . $_SERVER['REQUEST_URI'],
+        'description' => (is_single()) ? get_the_excerpt() : get_bloginfo('description'),
+        'image' => get_post_image($post->ID),
+        'image_size' => get_post_image_dimensions($post->ID),
+        'twitter' => $social_twitter,
+        'type' => (is_single()) ? 'article' : 'website',
+        'locale' => get_locale(),
+    );
+
+    return $a_info;
+}
 
 /**
  * Output Open Graph and Twitter Card Tags
@@ -89,8 +90,9 @@ $a_info = array(
  */
 
 function social_meta() {
-    open_graph_tags();
-    twitter_card_tags();
+    $meta_information = generate_post_meta();
+    open_graph_tags($meta_information);
+    twitter_card_tags($meta_information);
 }
 
 /**
@@ -100,16 +102,14 @@ function social_meta() {
  * information for Twitter Card. 
  */
 
-function twitter_card_tags() {
-    global $a_info;
-
+function twitter_card_tags($meta_info) {
     $twitter_meta = array(
         'twitter:card' => 'summary',
-        'twitter:site' => $a_info['twitter'],
-        'twitter:title' => $a_info['title'],
-        'twitter:description' => $a_info['description'],
-        'twitter:image:src' => $a_info['image'],
-        'twitter:url' => $a_info['url']
+        'twitter:site' => $meta_info['twitter'],
+        'twitter:title' => $meta_info['title'],
+        'twitter:description' => $meta_info['description'],
+        'twitter:image:src' => $meta_info['image'],
+        'twitter:url' => $meta_info['url']
     );
 
     foreach ($twitter_meta as $key => $value) {
@@ -124,19 +124,17 @@ function twitter_card_tags() {
  * information for Open Graph scrapers. 
  */
 
-function open_graph_tags() {
-    global $a_info;
-
+function open_graph_tags($meta_info) {
     $facebook_meta = array(
-        'og:title' => $a_info['title'],
-        'og:site_name' => $a_info['site_name'],
-        'og:url' => $a_info['url'],
-        'og:description' => $a_info['description'],
-        'og:image' => $a_info['image'],
-        'og:image:width' => $a_info['image_size'][0],
-        'og:image:height' => $a_info['image_size'][1],
-        'og:type' => $a_info['type'],
-        'og:locale' => $a_info['locale'],
+        'og:title' => $meta_info['title'],
+        'og:site_name' => $meta_info['site_name'],
+        'og:url' => $meta_info['url'],
+        'og:description' => $meta_info['description'],
+        'og:image' => $meta_info['image'],
+        'og:image:width' => $meta_info['image_size'][0],
+        'og:image:height' => $meta_info['image_size'][1],
+        'og:type' => $meta_info['type'],
+        'og:locale' => $meta_info['locale'],
     );
 
     if (is_single()) {
@@ -163,8 +161,6 @@ function open_graph_tags() {
  */
 
 function facebook_single_info($post_id = null) {
-    global $social_fallback;
-
     if (is_null($post_id)) {
         global $post;
         $post_id = $post->ID;
@@ -187,7 +183,7 @@ function facebook_single_info($post_id = null) {
 
     $single_meta['article:section'] = $category;
     $single_meta['article:tag'] = implode('', $taglist);
-    $single_meta['article:publisher'] = $social_fallback['publisher'];
+    $single_meta['article:publisher'] = $_SERVER['SERVER_NAME'];
 
     return $single_meta;
 }
