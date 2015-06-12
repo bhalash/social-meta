@@ -64,7 +64,10 @@ function generate_post_meta($post_id = null) {
     }
 
     $title = wp_title('-', false , 'right');
-    $title .= get_bloginfo('name'); 
+
+    if (strlen($title) === 0) {
+        $title .= get_bloginfo('name'); 
+    }
 
     $a_info = array(
         'ID' => $post->ID,
