@@ -157,9 +157,14 @@ function open_graph_tags() {
  * 1. Category. First post category is ascending numerical order is chosen.
  * 2. Tags. All tags are iteratively added.
  * 3. Publisher URL. Site URL is chosen.
+ * 
+ * @param   int     $post_id            ID of the post.
+ * @return  array   $single_meta        Extra meta infromation for the post.
  */
 
-function facebook_single_info($post_id) {
+function facebook_single_info($post_id = null) {
+    global $social_fallback;
+
     if (is_null($post_id)) {
         global $post;
         $post_id = $post->ID;
