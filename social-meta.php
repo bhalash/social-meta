@@ -41,7 +41,7 @@ require_once('article-images/article-images.php');
 /**
  * Default Social Accounts
  * -----------------------------------------------------------------------------
- * ¡Change these!
+ * ¡Please override these elsewhere!
  */
 
 if (!isset($social_twitter)) {
@@ -68,19 +68,17 @@ function generate_post_meta($post_id = null) {
         $post_id = $post->ID;
     }
 
-    $title = wp_title('-', false , 'right');
-
-    if (strlen($title) === 0) {
-        $title .= get_bloginfo('name'); 
-    }
+    // Use blog name unless title length > 0;
+    $title = (is_single()) ? get_the_title() : wp_title('-', false, 'right');
+    // Use blog description unless it is a single post with an excerpt length > 0.
+    $blurb = (is_single() && strlen(get_the_excerpt()) > 0) ? get_the_excerpt() : get_bloginfo('description');
 
     $a_info = array(
         'ID' => $post->ID,
-        // wp_title() is horrible and inconsistent.
         'title' => $title,
         'site_name' => get_bloginfo('name'),
         'url' => get_site_url() . $_SERVER['REQUEST_URI'],
-        'description' => (is_single()) ? get_the_excerpt() : get_bloginfo('description'),
+        'description' => $blurb,
         'image' => get_post_image($post->ID),
         'image_size' => get_post_image_dimensions($post->ID),
         'twitter' => $social_twitter,
