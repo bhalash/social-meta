@@ -41,6 +41,7 @@ require_once('article-images/article-images.php');
 /**
  * Default Social Accounts
  * -----------------------------------------------------------------------------
+ * ¡Change these!
  */
 
 if (!isset($social_twitter)) {
