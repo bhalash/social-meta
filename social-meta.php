@@ -39,12 +39,16 @@
 require_once('article-images/article-images.php');
 
 /**
- * Default Twitter Account
+ * Default Social Accounts
  * -----------------------------------------------------------------------------
  */
 
 if (!isset($social_twitter)) {
     $social_twitter = '@bhalash';
+}
+
+if (!isset($social_facebook)) {
+    $social_facebook = 'bhalash';
 }
 
 /**
@@ -169,6 +173,8 @@ function facebook_single_info($post_id = null) {
         $post_id = $post->ID;
     }
 
+    global $social_facebook;
+
     $category = get_the_category($post->ID)[0]->cat_name;
     $tags = get_the_tags();
     $taglist = array();
@@ -180,7 +186,7 @@ function facebook_single_info($post_id = null) {
 
     $single_meta['article:section'] = $category;
     $single_meta['article:tag'] = implode(', ', $taglist);
-    $single_meta['article:publisher'] = $_SERVER['SERVER_NAME'];
+    $single_meta['article:publisher'] = $social_facebook;
 
     return $single_meta;
 }
