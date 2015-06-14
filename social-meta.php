@@ -33,7 +33,7 @@
  * image from the post, and get its dimensions, for Facebook's Open Graph 
  * reader.
  *
- * See: https://github.com/bhalash/article-images
+ * @link https://github.com/bhalash/article-images
  */
 
 require_once('article-images/article-images.php');
@@ -106,6 +106,8 @@ function social_meta() {
  * -----------------------------------------------------------------------------
  * This function /should/ present all of the relevant and correct
  * information for Twitter Card. 
+ * 
+ * @param   array       $meta_info          Array of post meta information.
  */
 
 function twitter_card_tags($meta_info) {
@@ -128,6 +130,8 @@ function twitter_card_tags($meta_info) {
  * -----------------------------------------------------------------------------
  * This function /should/ present all of the relevant and correct
  * information for Open Graph scrapers. 
+ * 
+ * @param   array       $meta_info          Array of post meta information.
  */
 
 function open_graph_tags($meta_info) {
