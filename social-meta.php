@@ -75,7 +75,7 @@ function generate_post_meta($post_id = null) {
 
     $a_info = array(
         'ID' => $post->ID,
-        'title' => $title,
+        'title' => (strlen($title) > 0) ? $title : get_bloginfo('name'),
         'site_name' => get_bloginfo('name'),
         'url' => get_site_url() . $_SERVER['REQUEST_URI'],
         'description' => $blurb,
