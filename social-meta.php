@@ -74,13 +74,13 @@ function generate_post_meta($post_id = null) {
     $blurb = (is_single() && strlen(get_the_excerpt()) > 0) ? get_the_excerpt() : get_bloginfo('description');
 
     $a_info = array(
-        'ID' => $post->ID,
+        'ID' => $post_id,
         'title' => (strlen($title) > 0) ? $title : get_bloginfo('name'),
         'site_name' => get_bloginfo('name'),
         'url' => get_site_url() . $_SERVER['REQUEST_URI'],
         'description' => $blurb,
-        'image' => get_post_image($post->ID),
-        'image_size' => get_post_image_dimensions($post->ID),
+        'image' => get_post_image($post_id),
+        'image_size' => get_post_image_dimensions($post_id),
         'twitter' => $social_twitter,
         'type' => (is_single()) ? 'article' : 'website',
         'locale' => get_locale(),
@@ -172,8 +172,8 @@ function open_graph_tags($meta_info) {
 
 function facebook_single_info($post_id = null) {
     if (is_null($post_id)) {
-        global $post;
-        $post_id = $post->ID;
+        global $id;
+        $id_id = $id;
     }
 
     global $social_facebook;
