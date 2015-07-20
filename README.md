@@ -7,8 +7,8 @@ I wrote this because there are what seems like a hundred different WordPress Ope
 Social Meta requires my separate [Article Images](https://github.com/bhalash/article-images) library, to extract the correct image and its dimensions. Once you have that loaded (Social Meta will do this itself), you need to include the file in your `functions.php` file:
 
     $my_social_meta_instance = new Social_Meta(array(
-        'twitter' => '@username'
-        'facebook' => 'username'
+        'twitter' => '@username',
+        'facebook' => 'username',
         'fallback_image = array(
             'url' => get_template_directory_url() . '/path/to/image.jpg',
             'path' => get_template_directory() . '/path/to/image.jpg'
