@@ -10,7 +10,7 @@ Social Meta requires my separate [Article Images](https://github.com/bhalash/art
         'twitter' => '@username',
         'facebook' => 'username',
         'fallback_image = array(
-            'url' => get_template_directory_url() . '/path/to/image.jpg',
+            'url' => get_template_directory_uri() . '/path/to/image.jpg',
             'path' => get_template_directory() . '/path/to/image.jpg'
         )
     ));
