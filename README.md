@@ -11,7 +11,7 @@ Social Meta requires my separate [Article Images](https://github.com/bhalash/art
     $my_social_meta_instance = new Social_Meta(array(
         'twitter' => '@username',
         'facebook' => 'username',
-        'fallback_image = array(
+        'fallback_image' => array(
             'url' => get_template_directory_uri() . '/path/to/image.jpg',
             'path' => get_template_directory() . '/path/to/image.jpg'
         )
