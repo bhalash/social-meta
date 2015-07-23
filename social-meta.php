@@ -93,7 +93,7 @@ class Social_Meta {
     private function generate_post_meta($post = null) {
         $post = get_post($post);
 
-        if (!$post) || is_404()) {
+        if (!$post || is_404()) {
             return false;
         }
 
