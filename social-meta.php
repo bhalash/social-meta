@@ -75,12 +75,16 @@ class Social_Meta {
      */
 
     public function social_meta() {
-        // Generate base social meta.
-        $this->generate_post_meta();
-        // Output Open Graph meta tags.
-        $this->open_graph_tags();
-        // Output Twitter Card meta tags.
-        $this->twitter_card_tags();
+        global $post;
+
+        if (!is_404() || !$post) {
+            // Generate base social meta.
+            $this->generate_post_meta();
+            // Output Open Graph meta tags.
+            $this->open_graph_tags();
+            // Output Twitter Card meta tags.
+            $this->twitter_card_tags();
+        }
     }
 
     /**
