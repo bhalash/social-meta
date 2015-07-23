@@ -75,16 +75,12 @@ class Social_Meta {
      */
 
     public function social_meta() {
-        global $post;
-
-        if (!is_404() || !$post) {
-            // Generate base social meta.
-            $this->generate_post_meta();
-            // Output Open Graph meta tags.
-            $this->open_graph_tags();
-            // Output Twitter Card meta tags.
-            $this->twitter_card_tags();
-        }
+        // Generate base social meta.
+        $this->generate_post_meta();
+        // Output Open Graph meta tags.
+        $this->open_graph_tags();
+        // Output Twitter Card meta tags.
+        $this->twitter_card_tags();
     }
 
     /**
@@ -97,7 +93,7 @@ class Social_Meta {
     private function generate_post_meta($post = null) {
         $post = get_post($post);
 
-        if (!$post) {
+        if (!$post) || is_404()) {
             return false;
         }
 
@@ -131,6 +127,10 @@ class Social_Meta {
      */
 
     private function twitter_card_tags() {
+        if (is_404()) { 
+            return false;
+        }
+            
         $meta = $this->meta_information;
 
         $twitter_meta = array(
@@ -155,6 +155,10 @@ class Social_Meta {
      */
 
     private function open_graph_tags() {
+        if (is_404()) { 
+            return false;
+        }
+
         $meta = $this->meta_information;
 
         $facebook_meta = array(
@@ -194,7 +198,7 @@ class Social_Meta {
     private function facebook_single_info($post = null) {
         $post = get_post($post);
 
-        if (!$post) {
+        if (!$post || is_404()) {
             return false;
         }
 
