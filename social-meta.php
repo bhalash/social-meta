@@ -64,8 +64,8 @@ class Social_Meta {
             throw new Exception(self::$errors['unique']);
         }
 
-        if (!isset($args['fallback_image'])) {
-            throw new Exception(self::$errors['image']);
+        if (isset($args['fallback_image'])) {
+            set_fallback_image($args['fallback_image']);
         }
 
         if (!isset($args['facebook'])) {
@@ -78,7 +78,6 @@ class Social_Meta {
 
         self::$facebook = $args['facebook'];
         self::$instantiated = true;
-        set_fallback_image($args['fallback_image']);
         add_action('wp_head', array($this, 'social_meta'));
     }
 
