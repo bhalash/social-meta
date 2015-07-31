@@ -44,7 +44,7 @@ require_once('article-images/article-images.php');
 class Social_Meta {
     static $instantiated = false;
 
-    private static errors = array(
+    private static $errors = array(
         'unique' => 'Error: Social Meta may only be instantiated once.',
         'image' => 'Error: A fallback image must be provided. See README.md.',
         'facebook' => 'Error: a Facebook account must be provided.'
