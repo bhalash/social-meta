@@ -85,6 +85,39 @@ class Social_Meta {
     }
 
     /**
+     * Dynamic Excerpt
+     * -----------------------------------------------------------------------------
+     * WordPress's get_the_exerpt() and wp_trim_excerpt() functions only work
+     * within the post loop, and the $post object's post_excerpt only contains
+     * the hand-generate excerpt from the post edit screen. This function 
+     * generates a dynamic excerpt from the top of the post content, with an 
+     * optional word length.
+     *
+     * @param   id/object       $post           The post object.
+     * @param   int             $word_limit     Excerpt length in words.
+     */
+
+    private function generate_post_excerpt($post = null, $word_limit = 55) {
+        $post = get_post($post);
+
+        if (!$post) {
+            return;
+        }
+        
+        $excerpt = preg_replace('/<\/p>.*$/s', '', $post->post_content);
+        $excerpt = strip_tags($excerpt);
+
+        if (str_word_count($excerpt) >= $word_limit) {
+            $excerpt = explode(' ', $excerpt);
+            $excerpt = array_slice($excerpt, 0, $word_limit);
+            $excerpt[] = '[...]';
+            $excerpt = implode(' ', $excerpt);
+        }
+
+        return $excerpt;
+    }
+
+    /**
      * Post Information
      * -----------------------------------------------------------------------------
      * @param   int         $post            ID of the post. 
@@ -98,23 +131,36 @@ class Social_Meta {
             return false;
         }
 
-        $twitter = $this->args['twitter'];
         // Use blog name unless title length > 0;
         $title = (is_single()) ? get_the_title() : wp_title('-', false, 'right');
         // Use blog description unless it is a single post with an excerpt length > 0.
-        $blurb = (is_single() && strlen(get_the_excerpt()) > 0) ? get_the_excerpt() : get_bloginfo('description');
+
+        // Generate an excerpt for the post if it does not have a hand excerpt set.
+        $description = '';
+
+        if (is_single()) {
+            $description = $post->post_excerpt;
+                
+            if (!$description) {
+                $description = $this->generate_post_excerpt($post);
+            }
+        }
+
+        if (!$description) {
+            $description = get_bloginfo('description');
+        }
 
         $article_meta = array(
             'ID' => $post,
             'title' => (strlen($title) > 0) ? $title : get_bloginfo('name'),
             'site_name' => get_bloginfo('name'),
             'url' => get_site_url() . $_SERVER['REQUEST_URI'],
-            'description' => $blurb,
+            'description' => $description,
             'image' => get_post_image($post),
             'image_size' => get_post_image_dimensions($post),
-            'twitter' => $twitter,
             'type' => (is_single()) ? 'article' : 'website',
             'locale' => get_locale(),
+            'twitter' => $this->args['twitter']
         );
 
         $this->meta_information = $article_meta;
