@@ -250,7 +250,7 @@ class Social_Meta {
 
         if (is_single()) {
             $single_meta = $this->facebook_single_info($post);
-            $facebook_meta = array_merge$facebook_meta, $single_meta);
+            $facebook_meta = array_merge($facebook_meta, $single_meta);
         }
 
         foreach ($facebook_meta as $key => $value) {
