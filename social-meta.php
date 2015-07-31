@@ -274,13 +274,11 @@ class Social_Meta {
     private function facebook_single_info($post = null) {
         $category = get_the_category($post->ID)[0]->cat_name;
         $taglist = wp_get_post_tags($post);
-        $tags = array();
+        $tags = array('single');
 
         foreach (wp_get_post_tags($post) as $tag) {
             $tags[] = $tag->name;
         }
-
-        $tags[] = 'single';
 
         $single_meta = array(
             $single_meta['article:section'] => $category
