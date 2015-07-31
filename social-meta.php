@@ -281,9 +281,9 @@ class Social_Meta {
         }
 
         $single_meta = array(
-            $single_meta['article:section'] => $category
-            $single_meta['article:tag'] => implode(' ', $tags);
-            $single_meta['article:publisher'] => self::$facebook
+            'article:section' => $category,
+            'article:tag' => implode(' ', $tags),
+            'article:publisher' => self::$facebook
         );
 
         return $single_meta;
