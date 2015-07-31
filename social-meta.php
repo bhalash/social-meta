@@ -61,15 +61,15 @@ class Social_Meta {
         if (self::$instantiated) {
             /* Throw error if more than once instance is running, because more
              * than one instance leads to a mess of code in header */
-            throw new Exception(self::errors['unique']);
+            throw new Exception(self::$errors['unique']);
         }
 
         if (!isset($args['fallback_image'])) {
-            throw new Exception(self::errors['image']);
+            throw new Exception(self::$errors['image']);
         }
 
         if (!isset($args['facebook'])) {
-            throw new Exception(self::errors['facebook']);
+            throw new Exception(self::$errors['facebook']);
         }
 
         if (!isset($args['twitter'])) {
