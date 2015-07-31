@@ -72,7 +72,7 @@ class Social_Meta {
             throw new Exception(self::$errors['facebook']);
         }
 
-        if (!isset($args['twitter'])) {
+        if (isset($args['twitter'])) {
             self::$twitter = $args['twitter'];
         }
 
