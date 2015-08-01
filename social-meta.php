@@ -137,7 +137,7 @@ class Social_Meta {
         }
 
         if (!$desc) {
-            $desc = get_bloginfo('desc');
+            $desc = get_bloginfo('description');
         }
 
         return $desc;
