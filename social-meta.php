@@ -271,7 +271,10 @@ class Social_Meta {
      */
 
     private function facebook_single_info($post = null) {
-        $category = get_the_category($post->ID)[0]->cat_name;
+        if (!($category = get_the_category($post->ID)[0]->cat_name)) {
+            $category = get_category(get_option('default_category'))->cat_name;
+        }
+
         $taglist = array('single');
 
         foreach (wp_get_post_tags($post->ID) as $tag) {
