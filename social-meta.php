@@ -88,7 +88,7 @@ class Social_Meta {
      */
 
     public function social_meta() {
-        if (!is_404()) {
+        if (!is_404() && !is_search()) {
             // Generate base social meta.
             $this->generate_post_meta();
 
