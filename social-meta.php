@@ -121,11 +121,11 @@ class Social_Meta {
     private function generate_meta_desc($post = null, $word_limit = 55) {
         $desc = '';
 
-        if ($post && is_single()) {
-            $desc = $post->post_excerpt;
+        if ($post && (is_single() || is_page())) {
+            $desc = apply_filters('the_excerpt', $post->post_excerpt);
 
             if (!$desc) {
-                $desc = preg_replace('/<\/p>.*$/s', '', $post->post_content);
+                $desc = preg_replace('/<\/p>.*$/s', '', apply_filters('the_content', $post->post_content));
                 $desc = strip_tags($desc);
 
                 if (str_word_count($desc) >= $word_limit) {
@@ -155,8 +155,8 @@ class Social_Meta {
     private function generate_meta_title($post = null) {
         $title = '';
 
-        if ($post && is_single()) {
-            $title = $post->post_title;
+        if ($post && (is_single() || is_page())) {
+            $title = apply_filters('the_title', $post->post_title);
         }
 
         if (!$title) {
@@ -195,7 +195,7 @@ class Social_Meta {
             'url' => get_site_url() . $_SERVER['REQUEST_URI'],
             'image' => get_post_image($post),
             'image_size' => get_post_image_dimensions($post),
-            'type' => (is_single()) ? 'article' : 'website',
+            'type' => (is_single() || is_page()) ? 'article' : 'website',
             'locale' => get_locale(),
         );
 
@@ -249,7 +249,7 @@ class Social_Meta {
             'og:locale' => $meta['locale'],
         );
 
-        if (is_single()) {
+        if (is_single() || is_page()) {
             $single_meta = $this->facebook_single_info($post);
             $facebook_meta = array_merge($facebook_meta, $single_meta);
         }
@@ -273,8 +273,10 @@ class Social_Meta {
      */
 
     private function facebook_single_info($post = null) {
-        if (!($category = get_the_category($post->ID)[0]->cat_name)) {
+        if (!is_page() && (!($category = get_the_category($post->ID)[0]->cat_name))) {
             $category = get_category(get_option('default_category'))->cat_name;
+        } else {
+            $category = 'article';
         }
 
         $taglist = array('single');

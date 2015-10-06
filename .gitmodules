@@ -1,4 +1,5 @@
 [submodule "article-images"]
-	path = article-images
+    path = article-images
     url = git@github.com:bhalash/article-images.git
     branch = master
+    ignore = dirty
