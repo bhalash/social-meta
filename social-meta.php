@@ -39,7 +39,9 @@
  * @link https://github.com/bhalash/article-images
  */
 
-require_once('article-images/article-images.php');
+if (!function_exists('set_fallback_image')) {
+    require_once('article-images/article-images.php');
+}
 
 class Social_Meta {
     static $instantiated = false;
