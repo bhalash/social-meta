@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 /**
  * Site Header Social Meta
  * -----------------------------------------------------------------------------
- *  Social Meta generates 
+ *  Social Meta generates
  *
  * @category   PHP Script
  * @package    Social Meta
@@ -14,18 +14,18 @@
  * @link       https://github.com/bhalash/social-meta
  *
  * This file is part of Social Meta.
- * 
+ *
  * Social Meta is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software 
+ * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Social Meta is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details
- * 
- * You should have received a copy of the GNU General Public License along with 
+ *
+ * You should have received a copy of the GNU General Public License along with
  * Social Meta. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -33,7 +33,7 @@
  * Load Article Images (if it hasn't been loaded)
  * -----------------------------------------------------------------------------
  * This small standalone librairy is required to correctly get /any/ relevant
- * image from the post, and get its dimensions, for Facebook's Open Graph 
+ * image from the post, and get its dimensions, for Facebook's Open Graph
  * reader.
  *
  * @link https://github.com/bhalash/article-images
@@ -107,8 +107,8 @@ class Social_Meta {
      * -------------------------------------------------------------------------
      * WordPress's get_the_exerpt() and wp_trim_excerpt() functions only work
      * within the post loop, and the $post object's post_excerpt only contains
-     * the hand-generate excerpt from the post edit screen. This function 
-     * generates a dynamic excerpt from the top of the post content, with an 
+     * the hand-generate excerpt from the post edit screen. This function
+     * generates a dynamic excerpt from the top of the post content, with an
      * optional word length.
      *
      * @param   object          $post           The post object.
@@ -171,7 +171,7 @@ class Social_Meta {
     /**
      * Post Information
      * -------------------------------------------------------------------------
-     * @param   int         $post            ID of the post. 
+     * @param   int         $post            ID of the post.
      * @param   array       $a_into          Post meta information.
      */
 
@@ -204,7 +204,7 @@ class Social_Meta {
      * Twitter Card Meta Information
      * -------------------------------------------------------------------------
      * This function /should/ present all of the relevant and correct
-     * information for Twitter Card. 
+     * information for Twitter Card.
      */
 
     private function twitter_card_tags() {
@@ -212,7 +212,7 @@ class Social_Meta {
 
         $twitter_meta = array(
             'twitter:site' => self::$twitter,
-            'twitter:card' => 'summary',
+            'twitter:card' => 'summary_large_image',
             'twitter:title' => $meta['title'],
             'twitter:description' => $meta['description'],
             'twitter:image:src' => $meta['image'],
@@ -228,7 +228,7 @@ class Social_Meta {
      * Open Graph Meta Information
      * -------------------------------------------------------------------------
      * This function /should/ present all of the relevant and correct
-     * information for Open Graph scrapers. 
+     * information for Open Graph scrapers.
      */
 
     private function open_graph_tags() {
@@ -261,11 +261,11 @@ class Social_Meta {
      * Facebook Single Post Information
      * -------------------------------------------------------------------------
      * Facebook requires some extra categorization information for single posts:
-     * 
+     *
      * 1. Category. First post category is ascending numerical order is chosen.
      * 2. Tags. All tags are iteratively added.
      * 3. Publisher URL. Site URL is chosen.
-     * 
+     *
      * @param   int     $post            ID of the post.
      * @return  array   $single_meta        Extra meta infromation for the post.
      */
