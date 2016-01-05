@@ -217,7 +217,7 @@ class Social_Meta {
             'twitter:card' => 'summary_large_image',
             'twitter:title' => $meta['title'],
             'twitter:description' => $meta['description'],
-            'twitter:image:src' => $meta['image'],
+            'twitter:image' => $meta['image'],
             'twitter:url' => $meta['url']
         );
 
