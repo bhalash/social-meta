@@ -57,7 +57,7 @@ class Social_Meta {
     private static $twitter = null;
 
     // Meta information array.
-    public static $meta = array();
+    public static $meta = [];
 
     public function __construct($args) {
         if (self::$instantiated) {
@@ -66,7 +66,7 @@ class Social_Meta {
             throw new Exception(self::$errors['unique']);
         }
 
-        if (isset($args['fallback_image'])) {
+        if (isset($args['fallback']) && get_option('article_images_fallback') !== $args['fallback']) {
             set_fallback_image($args['fallback_image']);
         }
 
@@ -80,7 +80,7 @@ class Social_Meta {
 
         self::$facebook = $args['facebook'];
         self::$instantiated = true;
-        add_action('wp_head', array($this, 'social_meta'));
+        add_action('wp_head', [$this, 'social_meta']);
     }
 
     /**
@@ -118,7 +118,7 @@ class Social_Meta {
      * @return  string          $excerpt        Generated post excerpt.
      */
 
-    private function generate_meta_desc($post = null, $word_limit = 55) {
+    private function generate_meta_desc($post, $word_limit = 55) {
         $desc = '';
 
         if ($post && (is_single() || is_page())) {
@@ -152,20 +152,15 @@ class Social_Meta {
      * @return  string          $title      Meta Title.
      */
 
-    private function generate_meta_title($post = null) {
+    private function generate_meta_title($post) {
         $title = '';
 
         if ($post && (is_single() || is_page())) {
             $title = apply_filters('the_title', $post->post_title);
         }
 
-        if (!$title) {
-            $title = wp_title('-', false, 'right');
-        }
-
-        if (!$title) {
-            $title = get_bloginfo('name');
-        }
+        $title = $title ?: wp_title('-', false, 'right');
+        $title = $title ?: get_bloginfo('name');
 
         return $title;
     }
@@ -178,26 +173,28 @@ class Social_Meta {
      */
 
     private function generate_post_meta($post = null) {
-        $post = get_post($post);
+        if (!($post = get_post($post))) {
+            global $post;
+        }
 
         if (!$post) {
-            return false;
+            return;
         }
 
         $title = $this->generate_meta_title($post);
         $description = $this->generate_meta_desc($post);
 
-        $meta = array(
+        $meta = [
             'ID' => $post,
             'title' => $title,
             'description' => $description,
             'site_name' => get_bloginfo('name'),
             'url' => get_site_url() . $_SERVER['REQUEST_URI'],
-            'image' => get_post_image($post),
-            'image_size' => get_post_image_dimensions($post),
+            'image' => post_image_url($post),
+            'image_size' => get_local_image_dimensions(post_image_path($post)),
             'type' => (is_single() || is_page()) ? 'article' : 'website',
             'locale' => get_locale(),
-        );
+        ];
 
         self::$meta = $meta;
     }
@@ -212,14 +209,14 @@ class Social_Meta {
     private function twitter_card_tags() {
         $meta =& self::$meta;
 
-        $twitter_meta = array(
+        $twitter_meta = [
             'twitter:site' => self::$twitter,
             'twitter:card' => 'summary_large_image',
             'twitter:title' => $meta['title'],
             'twitter:description' => $meta['description'],
             'twitter:image' => $meta['image'],
             'twitter:url' => $meta['url']
-        );
+        ];
 
         foreach ($twitter_meta as $key => $value) {
             printf('<meta name="%s" content="%s">', $key, $value);
@@ -237,7 +234,7 @@ class Social_Meta {
         global $post;
         $meta =& self::$meta;
 
-        $facebook_meta = array(
+        $facebook_meta = [
             'og:title' => $meta['title'],
             'og:site_name' => $meta['site_name'],
             'og:url' => $meta['url'],
@@ -247,7 +244,7 @@ class Social_Meta {
             'og:image:height' => $meta['image_size'][1],
             'og:type' => $meta['type'],
             'og:locale' => $meta['locale'],
-        );
+        ];
 
         if (is_single() || is_page()) {
             $single_meta = $this->facebook_single_info($post);
@@ -272,24 +269,24 @@ class Social_Meta {
      * @return  array   $single_meta        Extra meta infromation for the post.
      */
 
-    private function facebook_single_info($post = null) {
+    private function facebook_single_info($post) {
         if (!is_page() && (!($category = get_the_category($post->ID)[0]->cat_name))) {
             $category = get_category(get_option('default_category'))->cat_name;
         } else {
             $category = 'article';
         }
 
-        $taglist = array('single');
+        $taglist = ['single'];
 
         foreach (wp_get_post_tags($post->ID) as $tag) {
             $taglist[] = $tag->name;
         }
 
-        $single_meta = array(
+        $single_meta = [
             'article:section' => $category,
             'article:tag' => implode(' ', $taglist),
             'article:publisher' => self::$facebook
-        );
+        ];
 
         return $single_meta;
     }
