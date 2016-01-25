@@ -29,6 +29,10 @@
  * Social Meta. If not, see <http://www.gnu.org/licenses/>.
  */
 
+if (!defined('ABSPATH')) {
+    die('-1');
+}
+
 /**
  * Load Article Images (if it hasn't been loaded)
  * -----------------------------------------------------------------------------
