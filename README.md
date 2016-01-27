@@ -6,14 +6,14 @@ To initialize:
 
     include('/path/to/social-meta/social-meta.php');
 
-    $my_social_meta_instance = new Social_Meta(array(
+    $my_social_meta_instance = new Social_Meta([
         'twitter' => '@username',
         'facebook' => 'username',
-        'fallback_image' => array(
+        'fallback_image' => [
             'url' => get_template_directory_uri() . '/path/to/image.jpg',
             'path' => get_template_directory() . '/path/to/image.jpg'
-        )
-    ));
+        ]
+    ]);
 
 That's it!
 
