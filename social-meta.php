@@ -276,7 +276,7 @@ class Social_Meta {
     private function facebook_single_info($post) {
         $category = 'article';
 
-        if (!is_page) {
+        if (!is_page()) {
             $category = get_the_category($post->ID)[0]->cat_name)));
             $category = $category ?: get_category(get_option('default_category'))->cat_name;
         }
